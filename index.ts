@@ -70,8 +70,8 @@ export const Collections = {
       : await query.first();
   },
   findMany: async (
-    matches,
-    collection,
+    matches: Array<[k: string, value: unknown]>,
+    collection: string,
     options?: { useMasterKey: boolean }
   ): Promise<Moralis.Object[]> => {
     const query = moralisQueryFactory(collection);
