@@ -42,7 +42,7 @@ export const moralisAclFactory = <T extends string>(
   return acl;
 };
 
-export const Query = {
+export const Collections = {
   findOne: async (matches, collection): Promise<Moralis.Object | undefined> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
@@ -56,5 +56,32 @@ export const Query = {
       query.equalTo(prop, value);
     });
     return await query.find();
+  },
+  create: async (
+    data: Record<string, unknown>,
+    collection: string,
+    aclOptions?: ACLFactoryOptions
+  ): Promise<Moralis.Object> => {
+    const obj = moralisObjectFactory(collection, true);
+    Object.entries(data).forEach(([key, value]) => {
+      obj.set(key, value);
+    });
+
+    if (aclOptions) {
+      const acl = moralisAclFactory(aclOptions);
+      obj.setACL(acl);
+    }
+
+    return await obj.save();
+  },
+  update: async (
+    updates: Record<string, unknown>,
+    obj: Moralis.Object
+  ): Promise<Moralis.Object> => {
+    if (updates.length === 0) return obj;
+    Object.entries(updates).forEach(([key, value]) => {
+      obj.set(key, value);
+    });
+    return await obj.save();
   },
 } as const;
