@@ -56,15 +56,18 @@ export const extractAttributes = (
 
 export const Collections = {
   findOne: async (
-    matches,
-    collection,
+    matches: Array<[k: string, value: unknown]>,
+    collection: string,
     options?: { useMasterKey: boolean }
   ): Promise<Moralis.Object | undefined> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
     });
-    return await query.first();
+
+    return options?.useMasterKey
+      ? await query.first({ useMasterKey: true })
+      : await query.first();
   },
   findMany: async (
     matches,
@@ -75,7 +78,9 @@ export const Collections = {
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
     });
-    return await query.find();
+    return options?.useMasterKey
+      ? await query.find({ useMasterkey: true })
+      : await query.find();
   },
   create: async (
     data: Record<string, unknown>,
