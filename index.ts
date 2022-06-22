@@ -4,7 +4,15 @@ import { ACLFactoryOptions } from "./types";
 // @ts-ignore: Unreachable code error
 const Moralis = require("moralis/node");
 
-export const moralisStart = async ({ serverUrl, appId, masterKey }) => {
+export const moralisStart = async ({
+  serverUrl,
+  appId,
+  masterKey,
+}: {
+  serverUrl: string;
+  appId: string;
+  masterKey: string;
+}) => {
   return await Moralis.start({ serverUrl, appId, masterKey });
 };
 
@@ -41,6 +49,10 @@ export const moralisAclFactory = <T extends string>(
 
   return acl;
 };
+
+export const extractAttributes = (
+  obj: Moralis.Object
+): Record<string, unknown> => obj.attributes;
 
 export const Collections = {
   findOne: async (
