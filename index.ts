@@ -56,7 +56,7 @@ export const extractAttributes = (
 
 export const Collections = {
   findOne: async (
-    matches: [string, unknown],
+    matches: Array<[string, unknown]>,
     collection: string,
     options?: { useMasterKey: boolean }
   ): Promise<MoralisTypes.Object | undefined> => {
@@ -70,7 +70,7 @@ export const Collections = {
       : await query.first()
   },
   findMany: async (
-    matches: [string, unknown],
+    matches: Array<[string, unknown]>,
     collection: string,
     options?: { useMasterKey: boolean }
   ): Promise<MoralisTypes.Object[]> => {
