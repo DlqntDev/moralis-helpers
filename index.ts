@@ -43,14 +43,22 @@ export const moralisAclFactory = <T extends string>(
 };
 
 export const Collections = {
-  findOne: async (matches, collection): Promise<Moralis.Object | undefined> => {
+  findOne: async (
+    matches,
+    collection,
+    options?: { useMasterKey: boolean }
+  ): Promise<Moralis.Object | undefined> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
     });
     return await query.first();
   },
-  findMany: async (matches, collection): Promise<Moralis.Object[]> => {
+  findMany: async (
+    matches,
+    collection,
+    options?: { useMasterKey: boolean }
+  ): Promise<Moralis.Object[]> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
@@ -76,12 +84,14 @@ export const Collections = {
   },
   update: async (
     updates: Record<string, unknown>,
-    obj: Moralis.Object
+    obj: Moralis.Object,
+    options?: { useMasterKey: boolean }
   ): Promise<Moralis.Object> => {
     if (updates.length === 0) return obj;
     Object.entries(updates).forEach(([key, value]) => {
       obj.set(key, value);
     });
+    if (options) return await obj.save(null, options);
     return await obj.save();
   },
 } as const;
