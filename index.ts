@@ -1,4 +1,4 @@
-import Moralis from "moralis/types";
+import MoralisTypes from "moralis/types";
 import { ACLFactoryOptions } from "./types";
 
 // @ts-ignore: Unreachable code error
@@ -51,7 +51,7 @@ export const moralisAclFactory = <T extends string>(
 };
 
 export const extractAttributes = (
-  obj: Moralis.Object
+  obj: MoralisTypes.Object
 ): Record<string, unknown> => obj.attributes;
 
 export const Collections = {
@@ -59,7 +59,7 @@ export const Collections = {
     matches: Array<[k: string, value: unknown]>,
     collection: string,
     options?: { useMasterKey: boolean }
-  ): Promise<Moralis.Object | undefined> => {
+  ): Promise<MoralisTypes.Object | undefined> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
@@ -73,7 +73,7 @@ export const Collections = {
     matches: Array<[k: string, value: unknown]>,
     collection: string,
     options?: { useMasterKey: boolean }
-  ): Promise<Moralis.Object[]> => {
+  ): Promise<MoralisTypes.Object[]> => {
     const query = moralisQueryFactory(collection);
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value);
@@ -86,7 +86,7 @@ export const Collections = {
     data: Record<string, unknown>,
     collection: string,
     aclOptions?: ACLFactoryOptions
-  ): Promise<Moralis.Object> => {
+  ): Promise<MoralisTypes.Object> => {
     const obj = moralisObjectFactory(collection, true);
     Object.entries(data).forEach(([key, value]) => {
       obj.set(key, value);
@@ -101,9 +101,9 @@ export const Collections = {
   },
   update: async (
     updates: Record<string, unknown>,
-    obj: Moralis.Object,
+    obj: MoralisTypes.Object,
     options?: { useMasterKey: boolean }
-  ): Promise<Moralis.Object> => {
+  ): Promise<MoralisTypes.Object> => {
     if (updates.length === 0) return obj;
     Object.entries(updates).forEach(([key, value]) => {
       obj.set(key, value);
