@@ -1,5 +1,5 @@
 import Moralis from "moralis/types";
-import { ACLFactoryOptions } from "./typs";
+import { ACLFactoryOptions } from "./types";
 
 // @ts-ignore: Unreachable code error
 const Moralis = require("moralis/node");
