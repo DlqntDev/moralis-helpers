@@ -73,9 +73,12 @@ export const Collections = {
       ? await query.first({ useMasterKey: true })
       : await query.first()
   },
-  findMany: async <T extends Record<string, unknown>>(
+  findMany: async <
+    T extends Record<string, unknown>,
+    K extends Record<string, string>
+  >(
     matches: Matchers<T[keyof T]>,
-    collection: string,
+    collection: K[keyof K],
     options?: { useMasterKey: boolean }
   ): Promise<MoralisTypes.Object<T>[]> => {
     const query = moralisQueryFactory<T>(collection)
