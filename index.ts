@@ -20,20 +20,22 @@ export const moralisStart = async ({
   return await Moralis.start({ serverUrl, appId, masterKey })
 }
 
-export const moralisObjectFactory = (
-  collection: string,
+export const moralisObjectFactory = <T extends Record<string, string>>(
+  collection: T[keyof T],
   createNewInstance = false
 ) => {
   const Obj = Moralis.Object.extend(collection)
   return createNewInstance ? new Obj() : Obj
 }
 
-export const moralisQueryFactory = <T extends Record<string, unknown>>(
-  collection: string
+export const moralisQueryFactory = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+  K extends Record<string, string> = Record<string, string>
+>(
+  collection: K[keyof K]
 ) => {
   return new Moralis.Query<Moralis.Object<T>>(moralisObjectFactory(collection))
 }
-
 export const moralisAclFactory = (options?: ACLFactoryOptions) => {
   const acl = new Moralis.ACL()
 
@@ -59,9 +61,12 @@ export const extractAttributes = (
 ): Record<string, unknown> => obj.attributes
 
 export const Collections = {
-  findOne: async <T extends Record<string, unknown>>(
-    matches,
-    collection: string,
+  findOne: async <
+    T extends Record<string, unknown>,
+    K extends Record<string, string>
+  >(
+    matches: Matchers<T[keyof T]>,
+    collection: K[keyof K],
     options?: { useMasterKey: boolean }
   ): Promise<Moralis.Object<T>> => {
     const query = moralisQueryFactory<T>(collection)
@@ -82,16 +87,22 @@ export const Collections = {
     options?: { useMasterKey: boolean }
   ): Promise<MoralisTypes.Object<T>[]> => {
     const query = moralisQueryFactory<T>(collection)
+
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value)
     })
+
     return options?.useMasterKey
       ? await query.find({ useMasterkey: true } as Moralis.Query.FindOptions)
       : await query.find()
   },
-  create: async (
-    data: Record<string, unknown>,
-    collection: string,
+
+  create: async <
+    T extends Record<string, unknown>,
+    K extends Record<string, string>
+  >(
+    data: T,
+    collection: K[keyof K],
     aclOptions?: ACLFactoryOptions
   ): Promise<MoralisTypes.Object> => {
     const obj = moralisObjectFactory(collection, true)
