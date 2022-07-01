@@ -10,6 +10,8 @@ type MoralisStart = {
   masterKey: string
 }
 
+type Matchers<T> = Array<[string, T]>
+
 export const moralisStart = async ({
   serverUrl,
   appId,
@@ -18,16 +20,18 @@ export const moralisStart = async ({
   return await Moralis.start({ serverUrl, appId, masterKey })
 }
 
-export const moralisObjectFactory = <T extends string>(
-  collection: T,
+export const moralisObjectFactory = (
+  collection: string,
   createNewInstance = false
 ) => {
   const Obj = Moralis.Object.extend(collection)
   return createNewInstance ? new Obj() : Obj
 }
 
-export const moralisQueryFactory = <T extends string>(collection: T) => {
-  return new Moralis.Query(moralisObjectFactory(collection))
+export const moralisQueryFactory = <T extends Record<string, unknown>>(
+  collection: string
+) => {
+  return new Moralis.Query<Moralis.Object<T>>(moralisObjectFactory(collection))
 }
 
 export const moralisAclFactory = (options?: ACLFactoryOptions) => {
@@ -55,12 +59,12 @@ export const extractAttributes = (
 ): Record<string, unknown> => obj.attributes
 
 export const Collections = {
-  findOne: async (
+  findOne: async <T extends Record<string, unknown>>(
     matches,
     collection: string,
     options?: { useMasterKey: boolean }
-  ): Promise<MoralisTypes.Object | undefined> => {
-    const query = moralisQueryFactory(collection)
+  ): Promise<Moralis.Object<T>> => {
+    const query = moralisQueryFactory<T>(collection)
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value)
     })
@@ -69,17 +73,17 @@ export const Collections = {
       ? await query.first({ useMasterKey: true })
       : await query.first()
   },
-  findMany: async (
-    matches,
+  findMany: async <T extends Record<string, unknown>>(
+    matches: Matchers<T[keyof T]>,
     collection: string,
     options?: { useMasterKey: boolean }
-  ): Promise<MoralisTypes.Object[]> => {
-    const query = moralisQueryFactory(collection)
+  ): Promise<MoralisTypes.Object<T>[]> => {
+    const query = moralisQueryFactory<T>(collection)
     matches.forEach(([prop, value]) => {
       query.equalTo(prop, value)
     })
     return options?.useMasterKey
-      ? await query.find({ useMasterkey: true } as any)
+      ? await query.find({ useMasterkey: true } as Moralis.Query.FindOptions)
       : await query.find()
   },
   create: async (
