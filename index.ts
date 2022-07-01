@@ -63,7 +63,7 @@ export const extractAttributes = (
 export const Collections = {
   findOne: async <
     T extends Record<string, unknown>,
-    K extends Record<string, string>
+    K extends Record<string, string> = Record<string, string>
   >(
     matches: Matchers<T[keyof T]>,
     collection: K[keyof K],
@@ -80,7 +80,7 @@ export const Collections = {
   },
   findMany: async <
     T extends Record<string, unknown>,
-    K extends Record<string, string>
+    K extends Record<string, string> = Record<string, string>
   >(
     matches: Matchers<T[keyof T]>,
     collection: K[keyof K],
@@ -99,7 +99,7 @@ export const Collections = {
 
   create: async <
     T extends Record<string, unknown>,
-    K extends Record<string, string>
+    K extends Record<string, string> = Record<string, string>
   >(
     data: T,
     collection: K[keyof K],
